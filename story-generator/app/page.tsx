@@ -84,12 +84,14 @@ setStoryResult('')
       <form onSubmit={onSubmitHandler} className="p-2">
         <label htmlFor="subject" className="block">Subjek utama cerita: </label>
 
-        <textarea
-          className="p-2 border w-full"
+        <select
           name="subject"
-          placeholder="subjek..."
-          rows={4}
-        />
+          className="p-2 border w-full"
+        >
+          <option value="cats">Kucing</option>
+          <option value="unicorns">Unicorn</option>
+          <option value="elfs">Peri</option>
+        </select>
 
         <button
           className="p-2 border cursor-pointer block mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -102,13 +104,8 @@ setStoryResult('')
       {storyResult && (
         <div className='p-2'>
           <label htmlFor="result" className="block">Hasil cerita: </label>
-          <textarea
-            className='p-2 border w-full'
-            value={storyResult}
-            readOnly
-            rows={10}
-            placeholder="Hasil cerita akan muncul di sini..."
-          />
+                <p className='p-2 border'>{storyResult}</p>
+
         </div>
       )}
       </div>
