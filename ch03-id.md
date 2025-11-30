@@ -86,15 +86,18 @@ export default function Home() {
   return (
     <>
       <h1>The Story Maker</h1>
-      <em>Aplikasi ini menggunakan Model GPT untuk menghasilkan cerita untuk anak-anak.</em>
+      <em>
+        Aplikasi ini menggunakan Model GPT untuk menghasilkan cerita untuk
+        anak-anak.
+      </em>
       {/* menambahkan kotak pilihan untuk mempercepat entri data */}
 
       <form onSubmit={onSubmitHandler}>
         Subjek utama cerita:
         <select name="subject">
-          <option value="cats">Kucing</option>
-          <option value="unicorns">Unicorn</option>
-          <option value="elfs">Peri</option>
+          <option value="kucing">Kucing</option>
+          <option value="unicorn">Unicorn</option>
+          <option value="peri">Peri</option>
         </select>
         <button>Tanya Model AI</button>
       </form>

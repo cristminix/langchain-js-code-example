@@ -1,21 +1,20 @@
+"use client"
 
-'use client'
-
-import { marked } from 'marked'
-import { useState, useEffect, useRef } from 'react'
+import { marked } from "marked"
+import { useState, useEffect, useRef } from "react"
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false)
-  const [storyResult, setStoryResult] = useState('')
+  const [storyResult, setStoryResult] = useState("")
   const [elapsedTime, setElapsedTime] = useState(0)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
   const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
-    const subject = formData.get('subject') as string
+    const subject = formData.get("subject") as string
 
     setIsLoading(true)
-setStoryResult('')
+    setStoryResult("")
     try {
       // panggil LLM dengan subjek sebagai prompt utama
       const response = await fetch("/api/generate-story", {
@@ -45,7 +44,7 @@ setStoryResult('')
       // Reset timer saat loading dimulai
       setElapsedTime(0)
       intervalRef.current = setInterval(() => {
-        setElapsedTime(prev => prev + 1)
+        setElapsedTime((prev) => prev + 1)
       }, 1000)
     } else {
       // Clear interval saat loading selesai
@@ -71,47 +70,52 @@ setStoryResult('')
     } else {
       const minutes = Math.floor(seconds / 60)
       const remainingSeconds = seconds % 60
-      return `${minutes} menit${remainingSeconds > 0 ? ` ${remainingSeconds} detik` : ''}`
+      return `${minutes} menit${
+        remainingSeconds > 0 ? ` ${remainingSeconds} detik` : ""
+      }`
     }
   }
 
   return (
     <>
-    <div className="p-4">
-      <h1 className="text-2xl">The Story Maker</h1>
+      <div className="p-4">
+        <h1 className="text-2xl">The Story Maker</h1>
 
-      <em>Aplikasi ini menggunakan Model GPT untuk menghasilkan cerita untuk anak-anak.</em>
+        <em>
+          Aplikasi ini menggunakan Model GPT untuk menghasilkan cerita untuk
+          anak-anak.
+        </em>
 
-      <form onSubmit={onSubmitHandler} className="p-2">
-        <label htmlFor="subject" className="block">Subjek utama cerita: </label>
+        <form onSubmit={onSubmitHandler} className="p-2">
+          <label htmlFor="subject" className="block">
+            Subjek utama cerita:{" "}
+          </label>
 
-        <select
-          name="subject"
-          className="p-2 border w-full"
-        >
-          <option value="cats">Kucing</option>
-          <option value="unicorns">Unicorn</option>
-          <option value="elfs">Peri</option>
-        </select>
+          <select name="subject" className="p-2 border w-full">
+            <option value="kucing">Kucing</option>
+            <option value="kuda">Kuda</option>
+            <option value="peri">Peri</option>
+          </select>
 
-        <button
-          className="p-2 border cursor-pointer block mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={isLoading}
-          type="submit"
-        >
-          {isLoading ? `⏳ Sedang memproses... (${formatTime(elapsedTime)})` : "🧠 Tanya Model AI"}
-        </button>
-      </form>
-      {storyResult && (
-        <div className='px-2'>
-          {/* <label htmlFor="result" className="block">Hasil cerita: </label> */}
-                <div
-                  className='p-2 border prose prose-sm max-w-none'
-                  dangerouslySetInnerHTML={{ __html: marked(storyResult) }}
-                />
-
-        </div>
-      )}
+          <button
+            className="p-2 border cursor-pointer block mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isLoading}
+            type="submit"
+          >
+            {isLoading
+              ? `⏳ Sedang memproses... (${formatTime(elapsedTime)})`
+              : "🧠 Tanya Model AI"}
+          </button>
+        </form>
+        {storyResult && (
+          <div className="px-2">
+            {/* <label htmlFor="result" className="block">Hasil cerita: </label> */}
+            <div
+              className="p-2 border prose prose-sm max-w-none"
+              dangerouslySetInnerHTML={{ __html: marked(storyResult) }}
+            />
+          </div>
+        )}
       </div>
     </>
   )

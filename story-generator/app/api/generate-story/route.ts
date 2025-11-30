@@ -25,15 +25,8 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: "Subject is required" }, { status: 400 })
     }
 
-    // sebuah chain yang menghubungkan model, prompt, dan opsi verbose
-    const chain = new LLMChain({
-      llm: model,
-
-      prompt,
-
-      // gunakan verbose untuk men-debug chain
-      verbose: true,
-    })
+    // sebuah chain lcel yang menghubungkan model, prompt, dan opsi verbose
+    const chain = prompt.pipe(model)
 
     const gptResponse = await chain.invoke({ subject })
 
