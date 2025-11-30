@@ -1,6 +1,7 @@
 
 'use client'
 
+import { marked } from 'marked'
 import { useState, useEffect, useRef } from 'react'
 
 export default function Home() {
@@ -102,9 +103,12 @@ setStoryResult('')
         </button>
       </form>
       {storyResult && (
-        <div className='p-2'>
-          <label htmlFor="result" className="block">Hasil cerita: </label>
-                <p className='p-2 border'>{storyResult}</p>
+        <div className='px-2'>
+          {/* <label htmlFor="result" className="block">Hasil cerita: </label> */}
+                <div
+                  className='p-2 border prose prose-sm max-w-none'
+                  dangerouslySetInnerHTML={{ __html: marked(storyResult) }}
+                />
 
         </div>
       )}
