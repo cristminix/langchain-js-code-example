@@ -1,16 +1,6 @@
 import { ChatOpenAI } from "@langchain/openai"
-import { LLMChain } from "langchain/chains"
 import { PromptTemplate } from "langchain/prompts"
 import { NextRequest, NextResponse } from "next/server"
-
-const model = new ChatOpenAI({
-  openAIApiKey: process.env.OPENAI_API_KEY,
-  modelName: process.env.OPENAI_MODEL,
-  configuration: {
-    baseURL: process.env.OPENAI_BASE_URL,
-  },
-  temperature: 0.9,
-})
 
 // semua logika sebelumnya masuk ke sini
 const makeStoryTitle = async (subject: string) => {
