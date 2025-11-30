@@ -96,7 +96,7 @@ Setelah Anda membuat kunci API Anda, kembali ke proyek Next.js dan tempelkan ke 
 ```
 // code/story-generator/.env
 
-OPENAI_API_KEY='sk-1234567890B2tT4HT3BlbkFJXkATN1arB9DXABkRQ1uj'
+OPENAI_API_KEY='your-openai-api-key-here'
 ```
 
 Kunci ini hanya akan digunakan di bagian backend aplikasi kita. Untuk mengakses kunci API di file code/story-generator/src/app/api/route.js kita dapat menulis sebagai berikut:
