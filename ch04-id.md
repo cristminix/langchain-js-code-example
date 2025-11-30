@@ -48,7 +48,7 @@ Beginilah tampilan kodenya:
 ```javascript
 // code/streaming/src/app/page.js
 
-'use client'
+"use client"
 
 import { useState } from "react"
 
@@ -57,68 +57,67 @@ export default function Home() {
   // variabel status baru untuk storyBody
   const [storyBody, setStoryBody] = useState()
 
-  const onSubmitHandler = async (e)=> {
+  const onSubmitHandler = async (e) => {
     e.preventDefault()
 
     const subject = e.target.subject.value
 
-    const response = await fetch('api', {
+    const response = await fetch("api", {
       method: "POST",
-      body: JSON.stringify({ subject })
+      body: JSON.stringify({ subject }),
     })
-```
 
-```javascript
     const { data } = await response.json()
 
     setStoryTitle(data)
-
   }
 
   // panggil metode ini ketika tombol mulai cerita ditekan
-  const startStoryStream = async ()=> {
+  const startStoryStream = async () => {
     // reset story body, panggil backend
     // dan tampilkan respons di story body
 
-    setStoryBody('')
+    setStoryBody("")
 
-    const response = await fetch('api', {
+    const response = await fetch("api", {
       method: "POST",
-      body: JSON.stringify({ storyTitle })
+      body: JSON.stringify({ storyTitle }),
     })
 
     const { data } = await response.json()
 
     setStoryBody(data)
-
   }
 
   return (
     <>
-      <h1>"  Pembuat Cerita</h1>
-      <em>Aplikasi ini menggunakan Model GPT untuk menghasilkan cerita untuk anak-anak.</em>
+      <h1>" Pembuat Cerita</h1>
+      <em>
+        Aplikasi ini menggunakan Model GPT untuk menghasilkan cerita untuk
+        anak-anak.
+      </em>
 
       <form onSubmit={onSubmitHandler}>
         Subjek utama cerita:
         <select name="subject">
-            <option value="cats">Kucing</option>
-            <option value="unicorns">Unicorn</option>
-            <option value="elfs">Peri</option>
+          <option value="cats">Kucing</option>
+          <option value="unicorns">Unicorn</option>
+          <option value="elfs">Peri</option>
         </select>
         <button>Tanya Model AI</button>
       </form>
       {/* jika kita memiliki judul cerita, tampilkan
       tombol mulai cerita dan story body */}
 
-      {storyTitle && <div>
-        <button onClick={startStoryStream}>
+      {storyTitle && (
+        <div>
+          <button onClick={startStoryStream}>
+            Ceritakan kisah {storyTitle}
+          </button>
 
-          Ceritakan kisah {storyTitle}
-
-        </button>
-
-        <p>{storyBody}</p>
-      </div>}
+          <p>{storyBody}</p>
+        </div>
+      )}
     </>
   )
 }
@@ -202,9 +201,9 @@ Perhatikan bahwa ini bukan interaksi permintaan-respons tunggal. Ini akan lebih 
 
 Kita akan mulai dengan backend. Semua perubahan akan dilakukan di metode `streamStory()` yang telah kita definisikan pada langkah sebelumnya:
 
+```javascript
 // code/streaming/src/app/api/route.js
 
-```javascript
 // sisanya tetap sama
 
 // ...

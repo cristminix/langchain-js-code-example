@@ -5,16 +5,46 @@ import { useState, useEffect, useRef } from "react"
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false)
-  const [storyResult, setStoryResult] = useState("")
+  const [storyTitle, setStoryTitle] = useState("")
+  const [storyBody, setStoryBody] = useState("")
+
   const [elapsedTime, setElapsedTime] = useState(0)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
+  const startStoryStream = async () => {
+    setStoryBody("")
+
+    const response = await fetch("/api/generate-story", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ storyTitle }),
+    })
+    if (response.ok && response.body) {
+      // pembaca akan bertindak sebagai "pipa" komunikasi data
+      const reader = response.body.getReader()
+
+      const decoder = new TextDecoder()
+      // jaga koneksi tetap terbuka selama kita terus menerima potongan respons baru
+
+      while (true) {
+        const { value, done } = await reader.read()
+
+        if (done) break
+
+        const chunkValue = decoder.decode(value)
+        // cara untuk menambahkan teks ke nilai string status React
+        setStoryBody((prev) => prev + chunkValue)
+      }
+    }
+  }
   const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
     const subject = formData.get("subject") as string
 
     setIsLoading(true)
-    setStoryResult("")
+    setStoryTitle("")
     try {
       // panggil LLM dengan subjek sebagai prompt utama
       const response = await fetch("/api/generate-story", {
@@ -26,11 +56,15 @@ export default function Home() {
       })
 
       // destructure dan cetak data respons
-      const { data } = await response.json()
-
-      const content = data?.text
-      console.log(content)
-      setStoryResult(content)
+      let { data } = await response.json()
+      if (data.kwargs) {
+        data = data.kwargs
+      }
+      const { content, text } = data
+      const finalContent = content ?? text
+      console.log(finalContent)
+      setStoryTitle(finalContent)
+      setStoryBody("")
     } catch (error) {
       console.error("Error:", error)
     } finally {
@@ -96,24 +130,44 @@ export default function Home() {
             <option value="kuda">Kuda</option>
             <option value="peri">Peri</option>
           </select>
-
-          <button
-            className="p-2 border cursor-pointer block mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={isLoading}
-            type="submit"
-          >
-            {isLoading
-              ? `⏳ Sedang memproses... (${formatTime(elapsedTime)})`
-              : "🧠 Tanya Model AI"}
-          </button>
+          <div className="flex">
+            <button
+              className="p-2 border cursor-pointer block mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isLoading}
+              type="submit"
+            >
+              {isLoading
+                ? `⏳ Sedang memproses... (${formatTime(elapsedTime)})`
+                : "🧠 Tanya Model AI"}
+            </button>
+          </div>
         </form>
-        {storyResult && (
+        {storyTitle && (
           <div className="px-2">
             {/* <label htmlFor="result" className="block">Hasil cerita: </label> */}
             <div
               className="p-2 border prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: marked(storyResult) }}
+              dangerouslySetInnerHTML={{ __html: marked(storyTitle) }}
             />
+          </div>
+        )}
+        {storyTitle && (
+          <div className="px-2 ">
+            <div className="flex">
+              <button
+                className="p-2 border cursor-pointer block mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isLoading}
+                onClick={startStoryStream}
+              >
+                🧠 Ceritakan kisah {storyTitle}
+              </button>
+            </div>
+            {storyBody && (
+              <div
+                className="p-2 mt-2 border prose prose-sm max-w-none"
+                dangerouslySetInnerHTML={{ __html: marked(storyBody) }}
+              />
+            )}
           </div>
         )}
       </div>

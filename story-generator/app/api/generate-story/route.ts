@@ -1,7 +1,7 @@
 import { ChatOpenAI } from "@langchain/openai"
 import { LLMChain } from "langchain/chains"
 import { PromptTemplate } from "langchain/prompts"
-import { NextRequest } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 
 const model = new ChatOpenAI({
   openAIApiKey: process.env.OPENAI_API_KEY,
@@ -11,24 +11,79 @@ const model = new ChatOpenAI({
   },
   temperature: 0.9,
 })
-// menetapkan format umum template
-const prompt = new PromptTemplate({
-  inputVariables: ["subject"],
 
-  template: "Beritahu saya judul cerita tentang {subject}",
-})
+// semua logika sebelumnya masuk ke sini
+const makeStoryTitle = async (subject: string) => {
+  const model = new ChatOpenAI({
+    openAIApiKey: process.env.OPENAI_API_KEY,
+    modelName: process.env.OPENAI_MODEL,
+    configuration: {
+      baseURL: process.env.OPENAI_BASE_URL,
+    },
+    temperature: 0.9,
+  })
+
+  const prompt = new PromptTemplate({
+    inputVariables: ["subject"],
+    template:
+      "Hasilkan 1 respons terhadap prompt masukan judul cerita tentang {subject}. Keluarkan HANYA responsnya, tanpa penjelasan atau teks tambahan.",
+  })
+
+  const chain = prompt.pipe(model)
+
+  return await chain.invoke({ subject })
+}
+const streamStory = async (storyTitle: string) => {
+  const encoder = new TextEncoder()
+
+  const stream = new TransformStream()
+  const writer = stream.writable.getWriter()
+
+  const model = new ChatOpenAI({
+    openAIApiKey: process.env.OPENAI_API_KEY,
+    modelName: process.env.OPENAI_MODEL,
+    configuration: {
+      baseURL: process.env.OPENAI_BASE_URL,
+    },
+    temperature: 0.9,
+    streaming: true,
+    callbacks: [
+      {
+        handleLLMNewToken: async (token) => {
+          await writer.ready
+          await writer.write(encoder.encode(`${token}`))
+        },
+        handleLLMEnd: async () => {
+          await writer.ready
+          await writer.close()
+        },
+      },
+    ],
+  })
+
+  const prompt = new PromptTemplate({
+    inputVariables: ["storyTitle"],
+    template: "Ceritakan kisah berjudul {storyTitle}",
+  })
+
+  const chain = prompt.pipe(model)
+  chain.invoke({ storyTitle })
+
+  return new NextResponse(stream.readable, {
+    headers: { "Content-Type": "text/event-stream" },
+  })
+}
 export async function POST(req: NextRequest) {
   try {
-    const { subject } = await req.json()
-
+    const { subject, storyTitle } = await req.json()
+    if (storyTitle) {
+      return streamStory(storyTitle)
+    }
     if (!subject) {
       return Response.json({ error: "Subject is required" }, { status: 400 })
     }
 
-    // sebuah chain lcel yang menghubungkan model, prompt, dan opsi verbose
-    const chain = prompt.pipe(model)
-
-    const gptResponse = await chain.invoke({ subject })
+    const gptResponse = await makeStoryTitle(subject)
 
     return Response.json({ data: gptResponse })
   } catch (error) {
