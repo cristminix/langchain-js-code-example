@@ -63,7 +63,8 @@ const streamStory = async (storyTitle: string) => {
 
   const prompt = new PromptTemplate({
     inputVariables: ["storyTitle"],
-    template: "Ceritakan kisah berjudul {storyTitle}",
+    template:
+      "Hasilkan 1 respons terhadap prompt masukan Ceritakan kisah berjudul {storyTitle}. Keluarkan HANYA responsnya, tanpa penjelasan atau teks tambahan.",
   })
 
   const chain = prompt.pipe(model)
