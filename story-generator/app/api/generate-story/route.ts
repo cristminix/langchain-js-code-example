@@ -1,4 +1,5 @@
 import { ChatOpenAI } from "@langchain/openai"
+import { LLMChain } from "langchain/chains"
 import { PromptTemplate } from "langchain/prompts"
 import { NextRequest } from "next/server"
 
@@ -24,12 +25,17 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: "Subject is required" }, { status: 400 })
     }
 
-    // meneruskan parameter { subject }
-    const formattedPrompt = await prompt.format({
-      subject,
+    // sebuah chain yang menghubungkan model, prompt, dan opsi verbose
+    const chain = new LLMChain({
+      llm: model,
+
+      prompt,
+
+      // gunakan verbose untuk men-debug chain
+      verbose: true,
     })
 
-    const gptResponse = await model.invoke(formattedPrompt)
+    const gptResponse = await chain.invoke({ subject })
 
     return Response.json({ data: gptResponse })
   } catch (error) {

@@ -28,7 +28,7 @@ setStoryResult('')
       // destructure dan cetak data respons
       const { data } = await response.json()
 
-      const content = data?.kwargs?.content || data
+      const content = data?.text
       console.log(content)
       setStoryResult(content)
     } catch (error) {
