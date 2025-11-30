@@ -1,4 +1,5 @@
 import { ChatOpenAI } from "@langchain/openai"
+import { PromptTemplate } from "langchain/prompts"
 import { NextRequest } from "next/server"
 
 const model = new ChatOpenAI({
@@ -9,7 +10,12 @@ const model = new ChatOpenAI({
   },
   temperature: 0.9,
 })
+// menetapkan format umum template
+const prompt = new PromptTemplate({
+  inputVariables: ["subject"],
 
+  template: "Beritahu saya judul cerita tentang {subject}",
+})
 export async function POST(req: NextRequest) {
   try {
     const { subject } = await req.json()
@@ -18,7 +24,12 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: "Subject is required" }, { status: 400 })
     }
 
-    const gptResponse = await model.invoke(subject)
+    // meneruskan parameter { subject }
+    const formattedPrompt = await prompt.format({
+      subject,
+    })
+
+    const gptResponse = await model.invoke(formattedPrompt)
 
     return Response.json({ data: gptResponse })
   } catch (error) {
