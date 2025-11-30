@@ -5,37 +5,48 @@ import { useState, useEffect, useRef } from "react"
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingStoryBody, setIsLoadingStoryBody] = useState(false)
   const [storyTitle, setStoryTitle] = useState("")
   const [storyBody, setStoryBody] = useState("")
 
   const [elapsedTime, setElapsedTime] = useState(0)
+  const [storyBodyElapsedTime, setStoryBodyElapsedTime] = useState(0)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
+  const storyBodyIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const startStoryStream = async () => {
+    setIsLoadingStoryBody(true)
     setStoryBody("")
+    setStoryBodyElapsedTime(0)
 
-    const response = await fetch("/api/generate-story", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ storyTitle }),
-    })
-    if (response.ok && response.body) {
-      // pembaca akan bertindak sebagai "pipa" komunikasi data
-      const reader = response.body.getReader()
+    try {
+      const response = await fetch("/api/generate-story", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ storyTitle }),
+      })
+      if (response.ok && response.body) {
+        // pembaca akan bertindak sebagai "pipa" komunikasi data
+        const reader = response.body.getReader()
 
-      const decoder = new TextDecoder()
-      // jaga koneksi tetap terbuka selama kita terus menerima potongan respons baru
+        const decoder = new TextDecoder()
+        // jaga koneksi tetap terbuka selama kita terus menerima potongan respons baru
 
-      while (true) {
-        const { value, done } = await reader.read()
+        while (true) {
+          const { value, done } = await reader.read()
 
-        if (done) break
+          if (done) break
 
-        const chunkValue = decoder.decode(value)
-        // cara untuk menambahkan teks ke nilai string status React
-        setStoryBody((prev) => prev + chunkValue)
+          const chunkValue = decoder.decode(value)
+          // cara untuk menambahkan teks ke nilai string status React
+          setStoryBody((prev) => prev + chunkValue)
+        }
       }
+    } catch (error) {
+      console.error("Error streaming story:", error)
+    } finally {
+      setIsLoadingStoryBody(false)
     }
   }
   const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -72,7 +83,7 @@ export default function Home() {
     }
   }
 
-  // Timer effect untuk menghitung waktu yang berjalan
+  // Timer effect untuk menghitung waktu yang berjalan (storyTitle)
   useEffect(() => {
     if (isLoading) {
       // Reset timer saat loading dimulai
@@ -96,6 +107,31 @@ export default function Home() {
       }
     }
   }, [isLoading])
+
+  // Timer effect untuk menghitung waktu storyBody loading
+  useEffect(() => {
+    if (isLoadingStoryBody) {
+      // Reset timer saat loading dimulai
+      setStoryBodyElapsedTime(0)
+      storyBodyIntervalRef.current = setInterval(() => {
+        setStoryBodyElapsedTime((prev) => prev + 1)
+      }, 1000)
+    } else {
+      // Clear interval saat loading selesai
+      if (storyBodyIntervalRef.current) {
+        clearInterval(storyBodyIntervalRef.current)
+        storyBodyIntervalRef.current = null
+      }
+    }
+
+    // Cleanup function
+    return () => {
+      if (storyBodyIntervalRef.current) {
+        clearInterval(storyBodyIntervalRef.current)
+        storyBodyIntervalRef.current = null
+      }
+    }
+  }, [isLoadingStoryBody])
 
   // Fungsi untuk format waktu
   const formatTime = (seconds: number) => {
@@ -130,7 +166,7 @@ export default function Home() {
             <option value="kuda">Kuda</option>
             <option value="peri">Peri</option>
           </select>
-          <div className="flex">
+          <div className="flex justify-end">
             <button
               className="p-2 border cursor-pointer block mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isLoading}
@@ -153,13 +189,17 @@ export default function Home() {
         )}
         {storyTitle && (
           <div className="px-2 ">
-            <div className="flex">
+            <div className="flex justify-end">
               <button
                 className="p-2 border cursor-pointer block mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={isLoading}
+                disabled={isLoadingStoryBody}
                 onClick={startStoryStream}
               >
-                🧠 Ceritakan kisah {storyTitle}
+                {isLoadingStoryBody
+                  ? `⏳ Sedang memproses... (${formatTime(
+                      storyBodyElapsedTime
+                    )})`
+                  : `🧠 Ceritakan kisah ${storyTitle}`}
               </button>
             </div>
             {storyBody && (
