@@ -1,6 +1,9 @@
 import { ChatOpenAI } from "@langchain/openai"
 import { PromptTemplate } from "langchain/prompts"
-import { StringOutputParser } from "langchain/schema/output_parser"
+import {
+  CommaSeparatedListOutputParser,
+  StringOutputParser,
+} from "langchain/schema/output_parser"
 import { NextRequest, NextResponse } from "next/server"
 
 // Fungsi pembuat model ChatOpenAI yang reusable
@@ -100,7 +103,7 @@ const answerQuestion = async (question: string) => {
   const prompt = PromptTemplate.fromTemplate(
     "Berikan 4 kemungkinan jawaban untuk {question}, dipisahkan oleh koma, 3 salah dan 1 benar, dalam urutan acak."
   )
-  const chain = prompt.pipe(model).pipe(new StringOutputParser())
+  const chain = prompt.pipe(model).pipe(new CommaSeparatedListOutputParser())
 
   return await chain.invoke({ question })
 }
