@@ -4,6 +4,7 @@ import {
   StringOutputParser,
 } from "langchain/schema/output_parser"
 import { createChatModel } from "../../global/fn/createChatModel"
+import { delay } from "@/app/global/fn/delay"
 
 const makePossibileAnswers = async (question: string) => {
   const model = createChatModel()
@@ -25,6 +26,7 @@ const makeQuestion = async () => {
 }
 export async function GET() {
   const question = await makeQuestion()
+  await delay(5000)
   const answers = await makePossibileAnswers(question)
   return Response.json({ question, answers })
 }
