@@ -1,22 +1,52 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
+import { formatTime } from "../global/fn/formatTime"
 
 export default function TriviaPage() {
   const [question, setQuestion] = useState()
   // menambahkan variabel status array kosong untuk menyimpan jawaban
+  const [isLoading, setIsLoading] = useState(false)
+  const [elapsedTime, setElapsedTime] = useState(0)
 
   const [answers, setAnswers] = useState([])
+  const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
   const getTriviaQuestion = async () => {
+    setIsLoading(true)
+    setElapsedTime(0)
+
     const response = await fetch("api/trivia")
     const data = await response.json()
     console.log(data)
     setQuestion(data.question)
     // setelah kita memiliki jawaban, perbarui status
     setAnswers(data.answers)
+    setIsLoading(false)
   }
+  // Timer effect untuk menghitung waktu yang berjalan (storyTitle)
+  useEffect(() => {
+    if (isLoading) {
+      // Reset timer saat loading dimulai
+      intervalRef.current = setInterval(() => {
+        setElapsedTime((prev) => prev + 1)
+      }, 1000)
+    } else {
+      // Clear interval saat loading selesai
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+        intervalRef.current = null
+      }
+    }
 
+    // Cleanup function
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+        intervalRef.current = null
+      }
+    }
+  }, [isLoading])
   return (
     <>
       <h1 className="text-2xl">Trivia Geografi</h1>
@@ -24,7 +54,9 @@ export default function TriviaPage() {
         onClick={getTriviaQuestion}
         className="p-2 border border-gray-300 cursor-pointer block mt-2 bg-white text-gray-900 hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 hover:dark:bg-gray-700"
       >
-        Ajukan pertanyaan geografi kepada saya
+        {isLoading
+          ? `⏳ Sedang memproses... (${formatTime(elapsedTime)})`
+          : "🧠  Ajukan pertanyaan geografi kepada saya"}
       </button>
 
       <p className="text-gray-900 dark:text-gray-300 mt-4">{question}</p>

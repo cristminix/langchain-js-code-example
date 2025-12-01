@@ -2,6 +2,7 @@
 
 import { marked } from "marked"
 import { useState, useEffect, useRef } from "react"
+import { formatTime } from "./global/fn/formatTime"
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false)
@@ -132,19 +133,6 @@ export default function Home() {
       }
     }
   }, [isLoadingStoryBody])
-
-  // Fungsi untuk format waktu
-  const formatTime = (seconds: number) => {
-    if (seconds < 60) {
-      return `${seconds} detik`
-    } else {
-      const minutes = Math.floor(seconds / 60)
-      const remainingSeconds = seconds % 60
-      return `${minutes} menit${
-        remainingSeconds > 0 ? ` ${remainingSeconds} detik` : ""
-      }`
-    }
-  }
 
   return (
     <>
