@@ -161,10 +161,23 @@ export default function Home() {
             Subjek utama cerita:{" "}
           </label>
 
-          <select name="subject" className="p-2 border w-full">
+          <select
+            name="subject"
+            className="p-2 border w-full dark:bg-gray-800 dark:text-white dark:border-gray-600"
+          >
             <option value="kucing">Kucing</option>
             <option value="kuda">Kuda</option>
             <option value="peri">Peri</option>
+            <option value="dinosaurus">Dinosaurus</option>
+            <option value="naga">Naga</option>
+            <option value="pesawat">Pesawat</option>
+            <option value="robot">Robot</option>
+            <option value="laut">Laut</option>
+            <option value="hutan">Hutan</option>
+            <option value="bola">Bola</option>
+            <option value="matahari">Matahari</option>
+            <option value="bintang">Bintang</option>
+            <option value="sekolah">Sekolah</option>
           </select>
           <div className="flex justify-end">
             <button

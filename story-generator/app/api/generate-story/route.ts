@@ -1,5 +1,6 @@
 import { ChatOpenAI } from "@langchain/openai"
 import { PromptTemplate } from "langchain/prompts"
+import { StringOutputParser } from "langchain/schema/output_parser"
 import { NextRequest, NextResponse } from "next/server"
 
 // Fungsi pembuat model ChatOpenAI yang reusable
@@ -59,7 +60,7 @@ const streamStory = async (storyTitle: string) => {
   const prompt = new PromptTemplate({
     inputVariables: ["storyTitle"],
     template:
-      "Ceritakan kisah berjudul {storyTitle}. Keluarkan HANYA responsnya, tanpa penjelasan atau teks tambahan.",
+      "Ceritakan kisah berjudul {storyTitle} sebanyak 500 karakter. Keluarkan HANYA responsnya, tanpa penjelasan atau teks tambahan.",
   })
 
   const chain = prompt.pipe(model)
@@ -92,4 +93,19 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     )
   }
+}
+
+const makeQuestion = async () => {
+  const model = createChatModel()
+  const prompt = PromptTemplate.fromTemplate(
+    `Ajukan satu pertanyaan trivia tentang geografi.Keluarkan HANYA responsnya, tanpa penjelasan atau teks tambahan.`
+  )
+  const chain = prompt.pipe(model).pipe(new StringOutputParser())
+
+  return await chain.invoke({})
+}
+export async function GET() {
+  const question = await makeQuestion()
+
+  return Response.json({ question })
 }
