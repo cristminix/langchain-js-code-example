@@ -37,7 +37,9 @@ const model = new ChatOpenAI({
   openAIApiKey: process.env.OPENAI_API_KEY,
 })
 
-const prompt = PromptTemplate.fromTemplate(`Ajukan pertanyaan trivia tentang geografi.`)
+const prompt = PromptTemplate.fromTemplate(
+  `Ajukan pertanyaan trivia tentang geografi.`
+)
 
 const chain = prompt.pipe(model)
 
@@ -62,7 +64,9 @@ const model = new ChatOpenAI({
   openAIApiKey: process.env.OPENAI_API_KEY,
 })
 
-const prompt = PromptTemplate.fromTemplate(`Ajukan pertanyaan trivia tentang geografi.`)
+const prompt = PromptTemplate.fromTemplate(
+  `Ajukan pertanyaan trivia tentang geografi.`
+)
 
 const chain = new prompt.pipe(model)
 
@@ -83,7 +87,9 @@ StringOutputParser mengambil output model dan mengubahnya menjadi string sederha
 Mari kita lihat seperti apa respons sebenarnya dari panggilan ChatGPT:
 
 ```javascript
-const prompt = PromptTemplate.fromTemplate(`Ajukan pertanyaan trivia tentang geografi.`)
+const prompt = PromptTemplate.fromTemplate(
+  `Ajukan pertanyaan trivia tentang geografi.`
+)
 
 const chain = prompt.pipe(model)
 const gptResponse = await chain.invoke()
@@ -122,7 +128,9 @@ const model = new ChatOpenAI({
 
 // membuat prompt dan memanggil chain
 const makeQuestion = async () => {
-  const prompt = PromptTemplate.fromTemplate(`Ajukan pertanyaan trivia tentang geografi.`)
+  const prompt = PromptTemplate.fromTemplate(
+    `Ajukan pertanyaan trivia tentang geografi.`
+  )
   // menambahkan parser ke chain LCEL sehingga kita mendapatkan
   // hanya output string sederhana alih-alih objek
   const chain = prompt.pipe(model).pipe(new StringOutputParser())
@@ -228,7 +236,9 @@ const makePossibileAnswers = async (question) => {
 }
 
 const makeQuestion = async () => {
-  const prompt = PromptTemplate.fromTemplate(`Ajukan pertanyaan trivia tentang geografi.`)
+  const prompt = PromptTemplate.fromTemplate(
+    `Ajukan pertanyaan trivia tentang geografi.`
+  )
 
   const chain = prompt.pipe(model).pipe(new StringOutputParser())
 
@@ -280,7 +290,9 @@ export default function Home() {
   return (
     <>
       <h1>' Trivia Geografi</h1>
-      <button onClick={getTriviaQuestion}>Ajukan pertanyaan geografi kepada saya</button>
+      <button onClick={getTriviaQuestion}>
+        Ajukan pertanyaan geografi kepada saya
+      </button>
 
       <p>{question}</p>
       {/* ulangi dan tampilkan setiap jawaban sebagai tombol */}
@@ -321,7 +333,11 @@ Misalnya, kita bisa membuat `RunnableSequence` dan meneruskan hasil metode `getF
 
 ```javascript
 const commaListOutputParser = new CommaSeparatedListOutputParser()
-const chain = RunnableSequence.from([PromptTemplate.fromTemplate(`Berikan saya 3 {topic}.\n{formatInstructions}`), new OpenAI({}), parser])
+const chain = RunnableSequence.from([
+  PromptTemplate.fromTemplate(`Berikan saya 3 {topic}.\n{formatInstructions}`),
+  new OpenAI({}),
+  parser,
+])
 return await chain.invoke({
   topic: "merek mobil",
   formatInstructions: commaListOutputParser.getFormatInstructions(),
@@ -397,7 +413,9 @@ const model = new ChatOpenAI({
 // Zod digunakan untuk mendefinisikan apakah suatu bidang adalah string, angka, array, dll
 const parser = StructuredOutputParser.fromZodSchema(
   z.object({
-    question: z.string().describe(`berikan saya pertanyaan trivia geografi acak`),
+    question: z
+      .string()
+      .describe(`berikan saya pertanyaan trivia geografi acak`),
     answers: z.array(z.string()).describe(`
                 berikan 4 kemungkinan jawaban, dalam urutan acak,
                 di mana hanya satu yang benar.`),
@@ -482,7 +500,9 @@ export default function Home() {
   return (
     <>
       <h1>' Trivia Geografi</h1>
-      <button onClick={getTriviaQuestion}>Ajukan pertanyaan geografi kepada saya</button>
+      <button onClick={getTriviaQuestion}>
+        Ajukan pertanyaan geografi kepada saya
+      </button>
 
       <p>{question}</p>
       {/* onClick periksa apakah pengguna menjawab dengan benar */}
@@ -499,6 +519,7 @@ export default function Home() {
 Tidak ada yang terlalu istimewa di sini. Kita telah menambahkan pendengar klik ke setiap tombol jawaban dan kita akan memeriksa apakah indeks tombol yang diklik itu cocok dengan indeks jawaban yang benar.
 
 Dan beginilah tampilan versi akhir UI:
+![](img/trivia.png)
 
 Perhatikan bahwa meskipun model yang lebih baru seperti ChatGpt 4 dapat melakukan sebagian dari manipulasi data ini secara langsung, mereka lebih mahal untuk digunakan. Oleh karena itu, kita dapat memanfaatkan output parser untuk menghemat biaya dan juga mendefinisikan format output yang sangat jelas, sehingga mengurangi perilaku yang tidak terduga.
 
