@@ -1,8 +1,9 @@
 "use client"
 
 import { marked } from "marked"
-import { useState, useEffect, useRef } from "react"
+import { useState } from "react"
 import { formatTime } from "./global/fn/formatTime"
+import { useTimer } from "./global/hooks/useTimer"
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false)
@@ -10,14 +11,11 @@ export default function Home() {
   const [storyTitle, setStoryTitle] = useState("")
   const [storyBody, setStoryBody] = useState("")
 
-  const [elapsedTime, setElapsedTime] = useState(0)
-  const [storyBodyElapsedTime, setStoryBodyElapsedTime] = useState(0)
-  const intervalRef = useRef<NodeJS.Timeout | null>(null)
-  const storyBodyIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const elapsedTime = useTimer(isLoading)
+  const storyBodyElapsedTime = useTimer(isLoadingStoryBody)
   const startStoryStream = async () => {
     setIsLoadingStoryBody(true)
     setStoryBody("")
-    setStoryBodyElapsedTime(0)
 
     try {
       const response = await fetch("/api/generate-story", {
@@ -83,56 +81,6 @@ export default function Home() {
       setIsLoading(false)
     }
   }
-
-  // Timer effect untuk menghitung waktu yang berjalan (storyTitle)
-  useEffect(() => {
-    if (isLoading) {
-      // Reset timer saat loading dimulai
-      setElapsedTime(0)
-      intervalRef.current = setInterval(() => {
-        setElapsedTime((prev) => prev + 1)
-      }, 1000)
-    } else {
-      // Clear interval saat loading selesai
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-        intervalRef.current = null
-      }
-    }
-
-    // Cleanup function
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-        intervalRef.current = null
-      }
-    }
-  }, [isLoading])
-
-  // Timer effect untuk menghitung waktu storyBody loading
-  useEffect(() => {
-    if (isLoadingStoryBody) {
-      // Reset timer saat loading dimulai
-      setStoryBodyElapsedTime(0)
-      storyBodyIntervalRef.current = setInterval(() => {
-        setStoryBodyElapsedTime((prev) => prev + 1)
-      }, 1000)
-    } else {
-      // Clear interval saat loading selesai
-      if (storyBodyIntervalRef.current) {
-        clearInterval(storyBodyIntervalRef.current)
-        storyBodyIntervalRef.current = null
-      }
-    }
-
-    // Cleanup function
-    return () => {
-      if (storyBodyIntervalRef.current) {
-        clearInterval(storyBodyIntervalRef.current)
-        storyBodyIntervalRef.current = null
-      }
-    }
-  }, [isLoadingStoryBody])
 
   return (
     <>

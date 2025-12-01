@@ -1,20 +1,19 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useState } from "react"
 import { formatTime } from "../global/fn/formatTime"
+import { useTimer } from "../global/hooks/useTimer"
 
 export default function TriviaPage() {
   const [question, setQuestion] = useState()
   // menambahkan variabel status array kosong untuk menyimpan jawaban
   const [isLoading, setIsLoading] = useState(false)
-  const [elapsedTime, setElapsedTime] = useState(0)
+  const elapsedTime = useTimer(isLoading)
 
   const [answers, setAnswers] = useState([])
-  const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
   const getTriviaQuestion = async () => {
     setIsLoading(true)
-    setElapsedTime(0)
 
     const response = await fetch("api/trivia")
     const data = await response.json()
@@ -24,29 +23,6 @@ export default function TriviaPage() {
     setAnswers(data.answers)
     setIsLoading(false)
   }
-  // Timer effect untuk menghitung waktu yang berjalan (storyTitle)
-  useEffect(() => {
-    if (isLoading) {
-      // Reset timer saat loading dimulai
-      intervalRef.current = setInterval(() => {
-        setElapsedTime((prev) => prev + 1)
-      }, 1000)
-    } else {
-      // Clear interval saat loading selesai
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-        intervalRef.current = null
-      }
-    }
-
-    // Cleanup function
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-        intervalRef.current = null
-      }
-    }
-  }, [isLoading])
   return (
     <>
       <h1 className="text-2xl">Trivia Geografi</h1>
