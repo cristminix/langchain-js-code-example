@@ -53,8 +53,7 @@ const makeQuestionAndAnswers = async () => {
   // definisikan chain baru dengan RunnableSequence
   const chain = RunnableSequence.from([
     PromptTemplate.fromTemplate(
-      `Buatkan satu pertanyaan trivia geografi acak beserta 4 pilihan jawaban (3 salah dan 1 benar) dalam urutan acak dan nomor jawaban yang benar (indeks nol).
-      
+      `Jawab pertanyaan pengguna sebaik mungkin.\n
       {format_instructions}`
     ),
 
