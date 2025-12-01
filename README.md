@@ -1,13 +1,7 @@
+### prequesities
+
+```json
 {
-  "name": "story-generator",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
-  },
   "dependencies": {
     "@langchain/openai": "^0.0.14",
     "@tailwindcss/typography": "^0.5.19",
@@ -32,3 +26,4 @@
     "typescript": "^5"
   }
 }
+```

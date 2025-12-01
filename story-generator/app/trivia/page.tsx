@@ -16,6 +16,7 @@ export default function TriviaPage() {
     setIsLoading(true)
     setQuestion("")
     setAnswers([])
+
     const response = await fetch("api/trivia")
     const data = await response.json()
     console.log(data)
@@ -24,11 +25,12 @@ export default function TriviaPage() {
     setAnswers(data.answers)
     setIsLoading(false)
   }
+  // Timer effect untuk menghitung waktu yang berjalan (storyTitle)
+
   return (
-    <div className="flex flex-col w-lg mx-auto p-4">
+    <>
       <h1 className="text-2xl">Trivia Geografi</h1>
       <button
-        disabled={isLoading}
         onClick={getTriviaQuestion}
         className="p-2 border border-gray-300 cursor-pointer block mt-2 bg-white text-gray-900 hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 hover:dark:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
       >
@@ -49,6 +51,6 @@ export default function TriviaPage() {
           </button>
         ))}
       </div>
-    </div>
+    </>
   )
 }
