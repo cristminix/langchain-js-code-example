@@ -1,28 +1,7 @@
-import { ChatOpenAI } from "@langchain/openai"
 import { PromptTemplate } from "langchain/prompts"
-import {
-  CommaSeparatedListOutputParser,
-  StringOutputParser,
-} from "langchain/schema/output_parser"
-import { NextRequest, NextResponse } from "next/server"
 
-// Fungsi pembuat model ChatOpenAI yang reusable
-const createChatModel = (options?: {
-  streaming?: boolean
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  callbacks?: any[]
-}) => {
-  return new ChatOpenAI({
-    openAIApiKey: process.env.OPENAI_API_KEY,
-    modelName: process.env.OPENAI_MODEL,
-    configuration: {
-      baseURL: process.env.OPENAI_BASE_URL,
-    },
-    temperature: 0.9,
-    streaming: options?.streaming ?? false,
-    callbacks: options?.callbacks,
-  })
-}
+import { NextRequest, NextResponse } from "next/server"
+import { createChatModel } from "../../global/fn/createChatModel"
 
 // semua logika sebelumnya masuk ke sini
 const makeStoryTitle = async (subject: string) => {
@@ -96,28 +75,4 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     )
   }
-}
-
-const makePossibileAnswers = async (question: string) => {
-  const model = createChatModel()
-  const prompt = PromptTemplate.fromTemplate(
-    "Berikan 4 kemungkinan jawaban untuk {question}, dipisahkan oleh koma, 3 salah dan 1 benar, dalam urutan acak."
-  )
-  const chain = prompt.pipe(model).pipe(new CommaSeparatedListOutputParser())
-
-  return await chain.invoke({ question })
-}
-const makeQuestion = async () => {
-  const model = createChatModel()
-  const prompt = PromptTemplate.fromTemplate(
-    `Ajukan satu pertanyaan trivia tentang geografi.Keluarkan HANYA responsnya, tanpa penjelasan atau teks tambahan.`
-  )
-  const chain = prompt.pipe(model).pipe(new StringOutputParser())
-
-  return await chain.invoke({})
-}
-export async function GET() {
-  const question = await makeQuestion()
-  const answer = await makePossibileAnswers(question)
-  return Response.json({ question, answer })
 }
