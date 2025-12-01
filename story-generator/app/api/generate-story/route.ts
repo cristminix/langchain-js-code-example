@@ -2,21 +2,32 @@ import { ChatOpenAI } from "@langchain/openai"
 import { PromptTemplate } from "langchain/prompts"
 import { NextRequest, NextResponse } from "next/server"
 
-// semua logika sebelumnya masuk ke sini
-const makeStoryTitle = async (subject: string) => {
-  const model = new ChatOpenAI({
+// Fungsi pembuat model ChatOpenAI yang reusable
+const createChatModel = (options?: {
+  streaming?: boolean
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  callbacks?: any[]
+}) => {
+  return new ChatOpenAI({
     openAIApiKey: process.env.OPENAI_API_KEY,
     modelName: process.env.OPENAI_MODEL,
     configuration: {
       baseURL: process.env.OPENAI_BASE_URL,
     },
     temperature: 0.9,
+    streaming: options?.streaming ?? false,
+    callbacks: options?.callbacks,
   })
+}
+
+// semua logika sebelumnya masuk ke sini
+const makeStoryTitle = async (subject: string) => {
+  const model = createChatModel()
 
   const prompt = new PromptTemplate({
     inputVariables: ["subject"],
     template:
-      "Hasilkan 1 respons terhadap prompt masukan judul cerita tentang {subject}. Keluarkan HANYA responsnya, tanpa penjelasan atau teks tambahan.",
+      "Buatkan satu judul cerita tentang {subject}. Keluarkan HANYA responsnya, tanpa penjelasan atau teks tambahan.",
   })
 
   const chain = prompt.pipe(model)
@@ -29,17 +40,11 @@ const streamStory = async (storyTitle: string) => {
   const stream = new TransformStream()
   const writer = stream.writable.getWriter()
 
-  const model = new ChatOpenAI({
-    openAIApiKey: process.env.OPENAI_API_KEY,
-    modelName: process.env.OPENAI_MODEL,
-    configuration: {
-      baseURL: process.env.OPENAI_BASE_URL,
-    },
-    temperature: 0.9,
+  const model = createChatModel({
     streaming: true,
     callbacks: [
       {
-        handleLLMNewToken: async (token) => {
+        handleLLMNewToken: async (token: string) => {
           await writer.ready
           await writer.write(encoder.encode(`${token}`))
         },
@@ -54,7 +59,7 @@ const streamStory = async (storyTitle: string) => {
   const prompt = new PromptTemplate({
     inputVariables: ["storyTitle"],
     template:
-      "Hasilkan 1 respons terhadap prompt masukan Ceritakan kisah berjudul {storyTitle}. Keluarkan HANYA responsnya, tanpa penjelasan atau teks tambahan.",
+      "Ceritakan kisah berjudul {storyTitle}. Keluarkan HANYA responsnya, tanpa penjelasan atau teks tambahan.",
   })
 
   const chain = prompt.pipe(model)
