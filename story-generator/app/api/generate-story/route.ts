@@ -95,6 +95,15 @@ export async function POST(req: NextRequest) {
   }
 }
 
+const answerQuestion = async (question: string) => {
+  const model = createChatModel()
+  const prompt = PromptTemplate.fromTemplate(
+    "Berikan 4 kemungkinan jawaban untuk {question}, dipisahkan oleh koma, 3 salah dan 1 benar, dalam urutan acak."
+  )
+  const chain = prompt.pipe(model).pipe(new StringOutputParser())
+
+  return await chain.invoke({ question })
+}
 const makeQuestion = async () => {
   const model = createChatModel()
   const prompt = PromptTemplate.fromTemplate(
@@ -106,6 +115,6 @@ const makeQuestion = async () => {
 }
 export async function GET() {
   const question = await makeQuestion()
-
-  return Response.json({ question })
+  const answer = await answerQuestion(question)
+  return Response.json({ question, answer })
 }
