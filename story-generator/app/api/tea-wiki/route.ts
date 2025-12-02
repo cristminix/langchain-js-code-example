@@ -5,7 +5,7 @@ import { StringOutputParser } from "langchain/schema/output_parser"
 
 const model = createChatModel()
 
-const chatHistory = [new HumanMessage(`Minuman favorit saya adalah teh.`)]
+const chatHistory = [new HumanMessage(`tanaman favorit saya adalah jarak.`)]
 
 const prompt = ChatPromptTemplate.fromMessages([
   // Kita perlu memberi tahu prompt bahwa ia akan memiliki memori
@@ -18,10 +18,13 @@ const outputParser = new StringOutputParser()
 const chain = prompt.pipe(model).pipe(outputParser)
 
 export async function POST() {
-  const question = `Beritahu fakta tentang minuman favorit saya dalam 250 karakter. Jangan ulangi fakta sebelumnya.`
+  const question = `Beritahu fakta manfaat tanaman favorit saya dalam 250 karakter. Jangan ulangi fakta sebelumnya.`
   chatHistory.push(new HumanMessage(question))
 
   const fact = await chain.invoke({
+    configurable: {
+      sessionId: "123456",
+    },
     input: question,
     // Hubungkan array chatHistory dengan prompt
     chat_history: chatHistory,
