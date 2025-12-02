@@ -12,7 +12,7 @@ Secara default, LLM tidak memiliki status. Setiap kueri yang masuk diproses seca
 
 Anda bekerja dengan toko teh dan telah ditugaskan untuk membuat aplikasi bertenaga GPT yang menyediakan fakta menarik tentang teh kepada pengguna. Di bawah ini adalah gambar seperti apa versi akhir aplikasi itu:
 
-![](img\005.png)
+![](img/005.png)
 
 Kita akan mulai dengan pengaturan berikut.
 
@@ -85,6 +85,7 @@ export async function POST() {
 ## 5.2. Menyuntikkan pesan ke dalam memori percakapan
 
 Sejak awal jelas bahwa kita memiliki masalah:
+![](img/006.png)
 
 Saat memanggil chain, kita dapat menggunakan properti `chat_history` untuk mengatur konteks memori untuk percakapan yang sedang berlangsung.
 
@@ -152,6 +153,8 @@ Dalam kasus ini, kita akan menggunakan `MessagesPlaceholder` dengan `chat_histor
 
 Dengan perubahan ini, model sekarang akan tahu bahwa minuman favorit kita adalah teh:
 
+![](img/007.png)
+
 Bagus! Satu langkah maju!
 
 Namun, kita sekarang menghadapi masalah lain. Mari kita lihat apa yang terjadi setelah kita meminta beberapa fakta.
@@ -197,6 +200,8 @@ export default function Home() {
 ```
 
 Model terus memberikan beberapa fakta lama yang sama, seperti kakek tua yang terus mengulang cerita yang sama berulang kali.
+
+![alt text](img/008.png)
 
 Kita bisa mencoba memperbarui prompt, tetapi itu tidak akan membantu:
 
@@ -312,6 +317,8 @@ Setiap kali pertanyaan baru datang dari pengguna, kita akan mendorongnya yang di
 Yang lebih penting, kita akan mendorong setiap fakta tentang teh dalam objek `AIMessage`. Ini akan memungkinkan LLM untuk menghindari pengulangan.
 
 Dan beginilah tampilan versi akhir aplikasi kita pada akhirnya:
+
+![alt text](img/009.png)
 
 Tidak ada lagi pengulangan di sini, berkat versi riwayat percakapan yang diperbarui.
 

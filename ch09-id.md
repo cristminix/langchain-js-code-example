@@ -20,6 +20,8 @@ Pada akhir bab ini, kita akan membangun aplikasi yang akan melakukan hal berikut
 - menggunakan agen untuk menjawab pertanyaan
 - output akan berisi jawaban atas pertanyaan, dan alat yang digunakan oleh agen untuk menemukan jawaban itu.
 
+![](img/agent-01.png)
+
 Kita akan mulai dari keadaan berikut: di frontend, kita akan membiarkan pengguna mengetik pertanyaan dan mengirimkan pertanyaan itu ke server. Ketika respons tiba, kita akan menampilkan teksnya.
 
 ```javascript
@@ -296,7 +298,7 @@ const agentExecutor = new AgentExecutor({
 
 Dan kode ini di HTML yang dikembalikan dari frontend:
 
-```javascript
+```jsx
 data && (
   <div>
     <p>
@@ -313,6 +315,8 @@ data && (
 ```
 
 Pada titik ini, jika kita bertanya kepada agen, "Berapa tahun telah berlalu sejak Brasil memenangkan Piala Dunia?" kita akan mendapatkan hasil berikut:
+
+![](img/agent-01.png)
 
 Mari kita bahas sedikit tentang perubahan yang ditambahkan.
 
@@ -377,6 +381,8 @@ const agent = await createReactAgent({
 ```
 
 Ada banyak jenis agen yang berbeda. Anda dapat melihat lima jenis agen utama yang tersedia saat ini di halaman ini:
+
+![](img/recap-00.png)
 
 Beberapa bagus untuk model lokal, beberapa bagus untuk model OpenAI terbaru, beberapa mendukung panggilan fungsi paralel, dan beberapa mendukung riwayat percakapan. Yang lain bagus untuk menggunakan alat sederhana dan input tunggal karena strategi prompting umum mereka.
 

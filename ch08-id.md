@@ -35,6 +35,8 @@ Kita dapat menyimpan entri ini dalam ruang embedding dua dimensi berdasarkan:
 
 Representasi visual mungkin terlihat seperti ini:
 
+![](img/rag-007.png)
+
 Setiap titik adalah vektor dengan format berikut:
 
 ```javascript
@@ -79,6 +81,8 @@ Kita ingin menambahkan fitur-fitur berikut ke aplikasi:
 - mengambil dan menjawab pertanyaan dari data baru
 
 Beginilah tampilan contoh akhirnya:
+
+![](img/rag-008.png)
 
 Kita akan mulai dengan frontend. Kita akan menambahkan tombol baru yang meminta URL dan mengirimkannya ke backend:
 
@@ -144,6 +148,8 @@ export default function Home() {
 ```
 
 Secara default, formulir pertanyaan akan dinonaktifkan. Setelah backend selesai memuat data dari URL, ia akan mengaktifkan formulir pertanyaan:
+
+![](img/rag-009.png)
 
 Perbedaan utamanya ada di backend, di mana model menjawab pertanyaan.
 
@@ -268,6 +274,8 @@ pemuat file, seperti CVS, PDF, EPUB, dll.
 dan pemuat web, seperti Figma, Amazon S3, transkrip Youtube, dll.
 
 Setelah teks mentah dimuat, kita memulai proses mengubah teks (yang dapat dipahami manusia) menjadi vektor angka (yang dapat dipahami AI):
+
+![](img/rag-010.png)
 
 Splitter ini disesuaikan untuk memproses teks umum. Ia mencoba membagi teks pada karakter-karakter ini secara berurutan hingga potongan-potongan yang dihasilkan mencapai ukuran optimal.
 

@@ -32,9 +32,11 @@ Apa pilihan lainnya? Gunakan RAG untuk menyediakan hanya sebagian kecil pengetah
 
 RAG menghemat waktu dan uang, karena tidak diperlukan pelatihan.
 
-6.2. Contoh pengaturan
+## 6.2. Contoh pengaturan
 
 Kita akan menjelajahi cara menghubungkan LLM dengan dokumen eksternal dengan membangun contoh berikut:
+
+![](img/rag-001.png)
 
 Dalam versi akhirnya, aplikasi kita akan tahu cara melakukan hal berikut:
 
@@ -44,6 +46,8 @@ Dalam versi akhirnya, aplikasi kita akan tahu cara melakukan hal berikut:
 - menjawab pertanyaan berdasarkan informasi ini
 
 Ini akan menjadi aliran data aplikasi:
+
+![](img/rag-002.png)
 
 Di bawah ini adalah pengaturan frontend awal. Kita mengirim pertanyaan dan mencetak responsnya:
 
@@ -124,9 +128,13 @@ export async function POST(req) {
 
 Beginilah tampilan pengaturan awal aplikasi:
 
+![](img/rag-003.png)
+
 Meskipun ini berfungsi seperti yang diharapkan untuk pertanyaan sederhana, batasan model menjadi terlihat ketika kita bertanya tentang topik di luar data pelatihannya.
 
 Misalnya, jika kita bertanya tentang LangSmith, platform untuk menyebarkan dan memantau aplikasi LLM, ia akan memberikan jawaban umum seperti di bawah ini:
+
+![](img/rag-004.png)
 
 Anda mungkin mengatakan bahwa kita bisa mencoba menggunakan model yang lebih baru. Misalnya, kita bisa mencoba menggunakan model gpt-4o, yang memiliki data pelatihannya hingga Oktober 2023. Kemungkinan besar, ia akan tahu sesuatu tentang LangSmith. Namun, masalah intinya akan tetap ada: kita akan selalu mengejar tanggal batas model.
 
@@ -139,7 +147,7 @@ Kita dapat menggunakan RAG untuk menambahkan informasi baru ke model dan mengata
 
 Jadi, mari kita jelaskan kepada model kita apa itu LangSmith.
 
-6.3. Menggunakan dokumen lokal
+## 6.3. Menggunakan dokumen lokal
 
 Salah satu cara termudah untuk memperluas konteks LLM dengan LangChain adalah dengan menggunakan dokumen lokal.
 
@@ -228,8 +236,12 @@ Panjang konteks mengacu pada jumlah kata maksimum yang dapat ditangani model sek
 
 Di bawah ini adalah panjang konteks default dari beberapa LLM populer:
 
+![](img/rag-005.png)
+
 Memperluas konteks tidak melatih ulang model; bobot tetap tidak berubah dalam proses ini.
 
 Frontend akan tetap sama. Kita hanya meneruskan pertanyaan dan menampilkan jawabannya.
 
 Mari kita coba. Akan bertanya lagi "Apa itu LangSmith?" dan sekarang akan mendapatkan jawaban dari dokumen lokal yang baru saja kita buat:
+
+![](img/rag-006.png)
