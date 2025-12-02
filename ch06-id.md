@@ -12,6 +12,8 @@ Secara default, LLM tidak memiliki status. Setiap kueri yang masuk diproses seca
 
 Anda bekerja dengan toko teh dan telah ditugaskan untuk membuat aplikasi bertenaga GPT yang menyediakan fakta menarik tentang teh kepada pengguna. Di bawah ini adalah gambar seperti apa versi akhir aplikasi itu:
 
+![](img\005.png)
+
 Kita akan mulai dengan pengaturan berikut.
 
 Di frontend, kita memiliki tombol yang membuat permintaan POST ke API dan mencetak jawabannya:
