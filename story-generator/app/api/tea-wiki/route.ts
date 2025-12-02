@@ -18,7 +18,7 @@ const outputParser = new StringOutputParser()
 const chain = prompt.pipe(model).pipe(outputParser)
 
 export async function POST() {
-  const question = `Beritahu fakta tentang minuman favorit saya.`
+  const question = `Beritahu fakta tentang minuman favorit saya dalam 250 karakter.`
 
   const fact = await chain.invoke({
     input: question,

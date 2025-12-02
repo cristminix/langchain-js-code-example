@@ -6,19 +6,21 @@ import { formatTime } from "../global/fn/formatTime"
 import { marked } from "marked"
 
 export default function Home() {
-  const [answer, setAnswer] = useState("")
+  // Ganti jawaban dengan array fakta
+  const [facts, setFacts] = useState<any>([])
   const [isLoading, setIsLoading] = useState(false)
   const elapsedTime = useTimer(isLoading)
   const tellFact = async () => {
-    setAnswer("")
+    // setAnswer("")
     setIsLoading(true)
     const response = await fetch("api/tea-wiki", {
       method: "POST",
     })
 
     const { data } = await response.json()
-
-    setAnswer(data)
+    // Tambahkan fakta baru ke array
+    setFacts([data, ...facts])
+    // setAnswer(data)
     setIsLoading(false)
   }
 
@@ -32,8 +34,13 @@ export default function Home() {
       >
         {isLoading ? `⏳ Sedang memproses... (${formatTime(elapsedTime)})` : "🧠  Beritahu fakta tentang minuman favorit saya"}
       </button>
-
-      {answer && <div className="p-2 mt-2 border  dark:bg-gray-800 dark:text-white dark:border-gray-600  prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: marked(answer) }} />}
+      {facts.length > 0 && (
+        <ul className="p-2 mt-2 border  dark:bg-gray-800 dark:text-white dark:border-gray-600">
+          {facts.map((fact, i) => (
+            <li className="mt-2  prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: marked(fact) }}></li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }
