@@ -1,14 +1,10 @@
 import { PromptTemplate } from "langchain/prompts"
-import {
-  CommaSeparatedListOutputParser,
-  StringOutputParser,
-  StructuredOutputParser,
-} from "langchain/schema/output_parser"
+import { CommaSeparatedListOutputParser, StringOutputParser, StructuredOutputParser } from "langchain/schema/output_parser"
 import { createChatModel } from "../../global/fn/createChatModel"
 import { z, ZodString, ZodArray, ZodNumber } from "zod"
 import { RunnableSequence } from "langchain/runnables"
 
-type TriviaConfig = {
+type ITriviaSchema = {
   question: ZodString
   answers: ZodArray<ZodString>
   correctIndex: ZodNumber
@@ -16,18 +12,14 @@ type TriviaConfig = {
 
 const makePossibileAnswers = async (question: string) => {
   const model = createChatModel()
-  const prompt = PromptTemplate.fromTemplate(
-    "Berikan 4 kemungkinan jawaban untuk {question}, dipisahkan oleh koma, 3 salah dan 1 benar, dalam urutan acak."
-  )
+  const prompt = PromptTemplate.fromTemplate("Berikan 4 kemungkinan jawaban untuk {question}, dipisahkan oleh koma, 3 salah dan 1 benar, dalam urutan acak.")
   const chain = prompt.pipe(model).pipe(new CommaSeparatedListOutputParser())
 
   return await chain.invoke({ question })
 }
 const makeQuestion = async () => {
   const model = createChatModel()
-  const prompt = PromptTemplate.fromTemplate(
-    `Ajukan satu pertanyaan trivia tentang geografi.Keluarkan HANYA responsnya, tanpa penjelasan atau teks tambahan.`
-  )
+  const prompt = PromptTemplate.fromTemplate(`Ajukan satu pertanyaan trivia tentang geografi.Keluarkan HANYA responsnya, tanpa penjelasan atau teks tambahan.`)
   const chain = prompt.pipe(model).pipe(new StringOutputParser())
 
   return await chain.invoke({})
@@ -37,14 +29,12 @@ const makeQuestion = async () => {
 
 const makeQuestionAndAnswers = async () => {
   // Zod digunakan untuk mendefinisikan apakah suatu bidang adalah string, angka, array, dll
-  const config: TriviaConfig = {
-    question: z
-      .string()
-      .describe(`berikan saya pertanyaan trivia geografi acak`),
+  const config: ITriviaSchema = {
+    question: z.string().describe(`berikan saya pertanyaan trivia geografi acak`),
     answers: z.array(z.string()).describe(`
                 berikan 4 kemungkinan jawaban, dalam urutan acak,
                 di mana hanya satu yang benar.`),
-    correctIndex: z.number().describe(`nomor jawaban yang benar, indeks nol`),
+    correctIndex: z.number().describe(`nomor index jawaban yang benar, indeks dimulai dari nol`),
   }
   const zodSchema = z.object(config)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -74,5 +64,5 @@ export async function GET() {
 
   const data = await makeQuestionAndAnswers()
 
-  return Response.json(data)
+  return Response.json({ data })
 }
