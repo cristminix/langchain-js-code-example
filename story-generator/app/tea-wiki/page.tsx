@@ -37,7 +37,7 @@ export default function Home() {
       {facts.length > 0 && (
         <ul className="p-2 mt-2 border  dark:bg-gray-800 dark:text-white dark:border-gray-600">
           {facts.map((fact, i) => (
-            <li className="mt-2  prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: marked(fact) }}></li>
+            <li key={i} className="mt-2  prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: marked(fact) }}></li>
           ))}
         </ul>
       )}
