@@ -26,6 +26,7 @@ export default function Home() {
     <div className="p-4 w-lg mx-auto">
       <h1 className="text-2xl">☕ Fakta Teh</h1>
       <button
+        disabled={isLoading}
         className="p-2 border border-gray-300 cursor-pointer block mt-2 bg-white text-gray-900 hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 hover:dark:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
         onClick={tellFact}
       >
