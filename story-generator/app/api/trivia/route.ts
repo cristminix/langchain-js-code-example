@@ -1,68 +1,71 @@
-import { PromptTemplate } from "langchain/prompts"
-import { CommaSeparatedListOutputParser, StringOutputParser, StructuredOutputParser } from "langchain/schema/output_parser"
-import { createChatModel } from "../../global/fn/createChatModel"
-import { z, ZodString, ZodArray, ZodNumber } from "zod"
-import { RunnableSequence } from "langchain/runnables"
+import { ChatPromptTemplate, PromptTemplate } from "langchain/prompts";
+import {
+  CommaSeparatedListOutputParser,
+  StringOutputParser,
+  StructuredOutputParser,
+} from "langchain/schema/output_parser";
+import { createChatModel } from "../../global/fn/createChatModel";
+import { z, ZodString, ZodArray, ZodNumber } from "zod";
+import { RunnableSequence } from "langchain/runnables";
+import { AIMessage, BaseMessage, HumanMessage } from "langchain/schema";
 
 type ITriviaSchema = {
-  question: ZodString
-  answers: ZodArray<ZodString>
-  correctIndex: ZodNumber
-}
+  question: ZodString;
+  answers: ZodArray<ZodString>;
+  correctIndex: ZodNumber;
+};
 
-const makePossibileAnswers = async (question: string) => {
-  const model = createChatModel()
-  const prompt = PromptTemplate.fromTemplate("Berikan 4 kemungkinan jawaban untuk {question}, dipisahkan oleh koma, 3 salah dan 1 benar, dalam urutan acak.")
-  const chain = prompt.pipe(model).pipe(new CommaSeparatedListOutputParser())
-
-  return await chain.invoke({ question })
-}
-const makeQuestion = async () => {
-  const model = createChatModel()
-  const prompt = PromptTemplate.fromTemplate(`Ajukan satu pertanyaan trivia tentang geografi.Keluarkan HANYA responsnya, tanpa penjelasan atau teks tambahan.`)
-  const chain = prompt.pipe(model).pipe(new StringOutputParser())
-
-  return await chain.invoke({})
-}
+// Definisikan chatHistory sebagai array BaseMessage
+const chatHistory: BaseMessage[] = [];
 // menggunakan StructuredOutputParser kita sekarang dapat membungkus semua
 // data ke dalam satu struktur tunggal
 
 const makeQuestionAndAnswers = async () => {
   // Zod digunakan untuk mendefinisikan apakah suatu bidang adalah string, angka, array, dll
   const config: ITriviaSchema = {
-    question: z.string().describe(`berikan saya pertanyaan trivia geografi acak`),
+    question: z
+      .string()
+      .describe(`berikan saya pertanyaan trivia geografi acak`),
     answers: z.array(z.string()).describe(`
                 berikan 4 kemungkinan jawaban, dalam urutan acak,
                 di mana hanya satu yang benar.`),
-    correctIndex: z.number().describe(`nomor index jawaban yang benar, indeks dimulai dari nol`),
-  }
-  const zodSchema = z.object(config)
+    correctIndex: z
+      .number()
+      .describe(`nomor index jawaban yang benar, indeks dimulai dari nol`),
+  };
+  const zodSchema = z.object(config);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const parser = StructuredOutputParser.fromZodSchema(zodSchema as any)
-  const model = createChatModel()
-  // definisikan chain baru dengan RunnableSequence
-  const chain = RunnableSequence.from([
-    PromptTemplate.fromTemplate(
+  const parser = StructuredOutputParser.fromZodSchema(zodSchema as any);
+  const model = createChatModel();
+
+  //Buat template prompt yang mendukung pesan history
+  const prompt = ChatPromptTemplate.fromMessages([
+    ...chatHistory,
+    [
+      "user",
       `Jawab pertanyaan pengguna sebaik mungkin.\n
-      {format_instructions}`
-    ),
-
-    model,
-
-    parser,
-  ])
+    {format_instructions}`,
+    ],
+  ]);
+  // definisikan chain baru dengan RunnableSequence
+  const chain = RunnableSequence.from([prompt, model, parser]);
   // mengembalikan JSON struktur yang ditentukan
-  return await chain.invoke({
-    format_instructions: parser.getFormatInstructions(),
-  })
-}
+  const userMessage = parser.getFormatInstructions();
+  chatHistory.push(new HumanMessage(userMessage));
+
+  const result = await chain.invoke({
+    format_instructions: userMessage,
+  });
+  chatHistory.push(new AIMessage(JSON.stringify(result)));
+
+  return result;
+};
 
 export async function GET() {
   // const question = await makeQuestion()
   // const answers = await makePossibileAnswers(question)
   // return Response.json({ question, answers })
 
-  const data = await makeQuestionAndAnswers()
-
-  return Response.json({ data })
+  const data = await makeQuestionAndAnswers();
+  return Response.json({ data });
 }

@@ -1,33 +1,33 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react";
 
-export function useTimer(isLoading: boolean, initialTime = 0, interval = 1000) {
-  const [elapsedTime, setElapsedTime] = useState(initialTime)
-  const intervalRef = useRef<NodeJS.Timeout | null>(null)
+export function useTimer(isLoading: boolean, initialTime = 1, interval = 1000) {
+  const [elapsedTime, setElapsedTime] = useState(initialTime);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (isLoading) {
       // Reset timer saat loading dimulai
       // eslint-disable-next-line react-hooks/exhaustive-deps
-      setElapsedTime(initialTime)
+      setElapsedTime(initialTime);
       intervalRef.current = setInterval(() => {
-        setElapsedTime((prev) => prev + 1)
-      }, interval)
+        setElapsedTime((prev) => prev + 1);
+      }, interval);
     } else {
       // Clear interval saat loading selesai
       if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-        intervalRef.current = null
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
       }
     }
 
     // Cleanup function
     return () => {
       if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-        intervalRef.current = null
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
       }
-    }
-  }, [isLoading, initialTime, interval])
+    };
+  }, [isLoading, initialTime, interval]);
 
-  return elapsedTime
+  return elapsedTime;
 }
