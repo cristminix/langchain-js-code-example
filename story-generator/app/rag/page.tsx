@@ -15,8 +15,11 @@ export default function Home() {
   const askQuestion = async () => {
     // setAnswer("")
     setIsLoading(true)
+    const question = (document.getElementsByName("question")[0] as HTMLInputElement).value
+
     const response = await fetch("api/rag", {
       method: "POST",
+      body: JSON.stringify({ question }),
     })
 
     const { data } = await response.json()
