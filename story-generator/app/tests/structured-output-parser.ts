@@ -1,9 +1,9 @@
 import { z } from "zod"
-import { StructuredOutputParser } from "langchain/schema/output_parser"
+import { StructuredOutputParser } from "@langchain/core/output_parsers"
 import { createChatModel } from "../global/fn/createChatModel"
-import { PromptTemplate } from "langchain/prompts"
-import { RunnableSequence } from "langchain/runnables"
-import dotenv from "dotenv"
+import { PromptTemplate } from "@langchain/core/prompts"
+import { RunnableSequence } from "@langchain/core/runnables"
+import * as dotenv from "dotenv"
 dotenv.config()
 type TriviaConfig = {
   question: z.ZodString
@@ -13,15 +13,11 @@ type TriviaConfig = {
 
 async function testTrivia() {
   const config: TriviaConfig = {
-    question: z
-      .string()
-      .describe(`berikan saya pertanyaan trivia geografi acak`),
+    question: z.string().describe(`berikan saya pertanyaan trivia geografi acak`),
     options: z.array(z.string()).describe(`
                 berikan 4 kemungkinan jawaban, dalam urutan acak,
                 di mana hanya satu yang benar.`),
-    correct_answer_index: z
-      .number()
-      .describe(`nomor jawaban yang benar, indeks nol`),
+    correct_answer_index: z.number().describe(`nomor jawaban yang benar, indeks nol`),
   }
   const zodSchema = z.object(config)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,4 +1,4 @@
-import { PromptTemplate } from "langchain/prompts"
+import { PromptTemplate } from "@langchain/core/prompts"
 
 import { NextRequest, NextResponse } from "next/server"
 import { createChatModel } from "../../global/fn/createChatModel"
@@ -9,8 +9,7 @@ const makeStoryTitle = async (subject: string) => {
 
   const prompt = new PromptTemplate({
     inputVariables: ["subject"],
-    template:
-      "Buatkan satu judul cerita tentang {subject}. Keluarkan HANYA responsnya, tanpa penjelasan atau teks tambahan.",
+    template: "Buatkan satu judul cerita tentang {subject}. Keluarkan HANYA responsnya, tanpa penjelasan atau teks tambahan.",
   })
 
   const chain = prompt.pipe(model)
@@ -41,8 +40,7 @@ const streamStory = async (storyTitle: string) => {
 
   const prompt = new PromptTemplate({
     inputVariables: ["storyTitle"],
-    template:
-      "Ceritakan kisah berjudul {storyTitle} sebanyak 500 karakter. Keluarkan HANYA responsnya, tanpa penjelasan atau teks tambahan.",
+    template: "Ceritakan kisah berjudul {storyTitle} sebanyak 500 karakter. Keluarkan HANYA responsnya, tanpa penjelasan atau teks tambahan.",
   })
 
   const chain = prompt.pipe(model)

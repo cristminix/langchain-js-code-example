@@ -5,6 +5,7 @@ export const createChatModel = (options?: {
   streaming?: boolean
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   callbacks?: any[]
+  temperature?: number
 }) => {
   return new ChatOpenAI({
     openAIApiKey: process.env.OPENAI_API_KEY,
@@ -12,7 +13,7 @@ export const createChatModel = (options?: {
     configuration: {
       baseURL: process.env.OPENAI_BASE_URL,
     },
-    temperature: 0.9,
+    temperature: options?.temperature ?? 0.7,
     streaming: options?.streaming ?? false,
     callbacks: options?.callbacks,
   })
