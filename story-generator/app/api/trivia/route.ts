@@ -19,7 +19,7 @@ const chatHistory: BaseMessage[] = []
 const makeQuestionAndAnswers = async () => {
   // Zod digunakan untuk mendefinisikan apakah suatu bidang adalah string, angka, array, dll
   const config: ITriviaSchema = {
-    question: z.string().describe(`berikan saya pertanyaan trivia geografi acak`),
+    question: z.string().describe(`berikan saya pertanyaan trivia tentang langchain acak`),
     answers: z.array(z.string()).describe(`
                 berikan 4 kemungkinan jawaban, dalam urutan acak,
                 di mana hanya satu yang benar.`),
