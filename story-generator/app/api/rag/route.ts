@@ -4,13 +4,13 @@ import { Document } from "@langchain/core/documents"
 //! createStuffDocumentsChain menggantikan LLMChain
 import { createStuffDocumentsChain } from "@langchain/classic/chains/combine_documents"
 import { createChatModel } from "@/app/global/fn/createChatModel"
+import { NextRequest } from "next/server"
 
-export async function POST() {
+export async function POST(req: NextRequest) {
   const model = createChatModel()
   const prompt = ChatPromptTemplate.fromTemplate(
     `Jawab pertanyaan pengguna berdasarkan konteks yang diberikan:
     
-    Konteks:
     {context}
     
     Pertanyaan: {input}`
@@ -30,7 +30,7 @@ export async function POST() {
     prompt,
   })
 
-  const question = "Apa itu LangSmith?"
+  const { question } = await req.json()
 
   const data = await chain.invoke({
     input: question,
