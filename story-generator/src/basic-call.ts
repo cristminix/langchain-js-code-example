@@ -1,5 +1,5 @@
 import { createChatModel } from "@/app/global/fn/createChatModel"
-import dotenv from "dotenv"
+import * as dotenv from "dotenv"
 dotenv.config()
 const run = async () => {
   const model = createChatModel({ temperature: 0.1 })
