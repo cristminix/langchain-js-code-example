@@ -595,7 +595,7 @@ Entity Memory Contents:
 }
 ```
 
-Jadi mari jalankan ini sehingga Anda dapat merasakan apa yang terjadi di sini, jadi mari bersihkan itu, PM Run start, dan saya akan jalankan ke memory basic, tetapi ya jadi efektifnya apa yang akan terjadi adalah saya akan mengatakan nama saya, akan mengatakan hai, saya akan bertanya apa nama saya, dan itu akan merespons, ini dia, jadi hai John, saya AI senang bertemu, dapatkah saya bertanya sesuatu, apa pekerjaan Anda, dan di sini saya pergi, apa nama saya, dan chatbot mengatakan nama Anda John, jadi Anda ingat bahwa nama saya John.
+Jadi mari jalankan ini sehingga Anda dapat merasakan apa yang terjadi di sini, jadi mari bersihkan itu, npm Run start, dan saya akan jalankan ke memory basic, tetapi ya jadi efektifnya apa yang akan terjadi adalah saya akan mengatakan nama saya, akan mengatakan hai, saya akan bertanya apa nama saya, dan itu akan merespons, ini dia, jadi hai John, saya AI senang bertemu, dapatkah saya bertanya sesuatu, apa pekerjaan Anda, dan di sini saya pergi, apa nama saya, dan chatbot mengatakan nama Anda John, jadi Anda ingat bahwa nama saya John.
 
 Dan saya mencoba hanya menempatkan ini dalam diagram, omong-omong gambar ini akan tersedia untuk Anda gunakan dan tinjau setelah video ini juga, tetapi seperti yang saya katakan, memberikan rantai atau agen kemampuan untuk mengingat informasi dari percakapan sebelumnya, jadi Anda memiliki input dari pengguna, konteks chat sebelumnya, dan kemudian itu dikemas ke dalam instruksi atau prompt dengan cara terstruktur, LangChain membantu Anda melakukan di belakang layar, Anda meneruskannya ke model, dan Anda mendapatkan jawaban akhir.
 
