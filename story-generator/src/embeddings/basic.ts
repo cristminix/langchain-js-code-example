@@ -1,5 +1,5 @@
-import { config } from "dotenv"
 import { OpenAIEmbeddings } from "@langchain/openai"
+import { config } from "dotenv"
 
 // Load environment variables from .env file
 config()

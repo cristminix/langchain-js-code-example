@@ -1,4 +1,5 @@
 onlyBuiltDependencies:
   - esbuild
+  - faiss-node
   - sharp
   - unrs-resolver
