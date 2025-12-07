@@ -1,8 +1,6 @@
-import { ChatOpenAI } from "@langchain/openai"
+import type { BaseLanguageModel } from "@langchain/core/language_models/base"
 
 import { ChatPromptTemplate } from "@langchain/core/prompts"
-//! kita membutuhkan ini untuk membuat dokumen lokal
-import { Document } from "@langchain/core/documents"
 //! createStuffDocumentsChain menggantikan LLMChain
 import { createStuffDocumentsChain } from "@langchain/classic/chains/combine_documents"
 
@@ -15,7 +13,7 @@ import { CheerioWebBaseLoader } from "@langchain/community/document_loaders/web/
 // alat untuk membuat vektor dan embedding
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters"
 
-import { OpenAIEmbeddings } from "@langchain/openai"
+import { OllamaEmbeddings } from "@langchain/ollama"
 
 import { MemoryVectorStore } from "@langchain/classic/vectorstores/memory"
 // alat pengambilan
@@ -32,7 +30,7 @@ const prompt = ChatPromptTemplate.fromTemplate(
 let retrievalChain, splitDocs
 
 // proses RAG
-async function loadDocumentsFromUrl(url: string, model: any) {
+async function loadDocumentsFromUrl(url: string, model: BaseLanguageModel) {
   // pemuat dokumen
   const loader = new CheerioWebBaseLoader(url)
 
@@ -40,20 +38,20 @@ async function loadDocumentsFromUrl(url: string, model: any) {
 
   // transformer dokumen
   const splitter = new RecursiveCharacterTextSplitter({
-    chunkSize: 100,
+    chunkSize: 400,
 
     chunkOverlap: 20,
   })
 
   splitDocs = await splitter.splitDocuments(docs)
-
+  console.log(splitDocs)
   //! mengatur embedding
-  const embeddings = new OpenAIEmbeddings({
-    openAIApiKey: process.env.OPENAI_API_KEY,
-    configuration: {
-      baseURL: process.env.OPENAI_BASE_URL,
-    },
-    modelName: process.env.OPENAI_MODEL,
+  const embeddings = new OllamaEmbeddings({
+    // model: "nomic-embed-text",
+    model: "all-minilm:l6-v2",
+
+    // You can also specify other options like baseUrl if needed, e.g.,
+    baseUrl: "http://localhost:11434",
   })
 
   //! membuat DB vektor lokal
@@ -81,9 +79,10 @@ async function loadDocumentsFromUrl(url: string, model: any) {
 async function main() {
   const model = createChatModel()
 
-  const question = "Apa itu LangSmith?"
+  const question = "Cara mendapat api key Langsmith ?"
 
-  const url = "https://docs.langchain.com/langsmith/home"
+  const url =
+    "https://langchain.altero.ai/ch01-memulai-dengan-langchain/02.-langsmith"
 
   //! jika pengguna mengirim URL, atur RAG dan kembalikan
   if (url) {
