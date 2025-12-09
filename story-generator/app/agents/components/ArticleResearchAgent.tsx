@@ -11,7 +11,9 @@ interface AgentResult {
 }
 
 export default function ArticleResearchAgent() {
-  const [question, setQuestion] = useState<string>("");
+  const [question, setQuestion] = useState<string>(
+    "Udah berapa tahun sejak Brasil juara Piala Dunia?",
+  );
   const [data, setData] = useState<AgentResult | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 

@@ -2,6 +2,10 @@ import { PromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { NextRequest } from "next/server";
 import { createChatModel } from "@/app/global/fn/createChatModel";
+import { WikipediaQueryRun } from "@langchain/community/tools/wikipedia_query_run";
+import { createReactAgent, AgentExecutor } from "@langchain/classic/agents";
+import { Calculator } from "@langchain/community/tools/calculator";
+import { pull } from "langchain/hub";
 
 // Create model inside the POST function to handle environment variable issues
 export async function POST(req: NextRequest) {
@@ -26,24 +30,38 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const prompt = new PromptTemplate({
-      inputVariables: ["question"],
-      template: "Jawab pertanyaan pengguna {question} singkat saja",
+    // ! membuat kotak alat untuk agen
+    // ! ingat untuk menjalankan 'npm install @langchain/community'
+    const wikipediaQuery = new WikipediaQueryRun({ topKResults: 1 });
+
+    const calculator = new Calculator();
+
+    const tools = [wikipediaQuery, calculator];
+
+    // ! mendapatkan aturan agen
+    const prompt = await pull("hwchase17/react");
+
+    // ! mendefinisikan Agen dan AgentExecutor
+    const agent = await createReactAgent({
+      llm: model,
+      tools,
+      prompt,
     });
+    const agentExecutor = new AgentExecutor({
+      agent,
 
-    const chain = prompt.pipe(model).pipe(new StringOutputParser());
-
-    if (!chain) {
+      tools,
+    });
+    if (!agentExecutor) {
       return Response.json(
         { error: "Chain is not initialized properly" },
         { status: 500 },
       );
     }
 
-    const answer = await chain.invoke({
-      question,
+    const answer = await agentExecutor.invoke({
+      input: question,
     });
-
     return Response.json({ answer, question, tools: [] });
   } catch (error) {
     console.error("Error in POST /api/agents:", error);
