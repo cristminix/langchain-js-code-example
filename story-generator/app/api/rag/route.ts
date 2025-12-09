@@ -39,7 +39,7 @@ async function loadDocumentsFromUrl(url: string, model: BaseLanguageModel) {
 
   // transformer dokumen
   const splitter = new RecursiveCharacterTextSplitter({
-    chunkSize: 250,
+    chunkSize: 450,
 
     chunkOverlap: 20,
   })
