@@ -1,11 +1,9 @@
-import { PromptTemplate } from "@langchain/core/prompts";
-import { StringOutputParser } from "@langchain/core/output_parsers";
 import { NextRequest } from "next/server";
+import { PromptTemplate } from "@langchain/core/prompts";
 import { createChatModel } from "@/app/global/fn/createChatModel";
 import { WikipediaQueryRun } from "@langchain/community/tools/wikipedia_query_run";
-import { createReactAgent, AgentExecutor } from "@langchain/classic/agents";
+import { initializeAgentExecutorWithOptions } from "@langchain/classic/agents";
 import { Calculator } from "@langchain/community/tools/calculator";
-import { pull } from "langchain/hub";
 
 // Create model inside the POST function to handle environment variable issues
 export async function POST(req: NextRequest) {
@@ -38,20 +36,16 @@ export async function POST(req: NextRequest) {
 
     const tools = [wikipediaQuery, calculator];
 
-    // ! mendapatkan aturan agen
-    const prompt = await pull("hwchase17/react");
-
-    // ! mendefinisikan Agen dan AgentExecutor
-    const agent = await createReactAgent({
-      llm: model,
+    // ! mendefinisikan Agen dan AgentExecutor dengan pendekatan classic
+    const agentExecutor = await initializeAgentExecutorWithOptions(
       tools,
-      prompt,
-    });
-    const agentExecutor = new AgentExecutor({
-      agent,
+      model,
+      {
+        agentType: "zero-shot-react-description",
+        verbose: true,
+      },
+    );
 
-      tools,
-    });
     if (!agentExecutor) {
       return Response.json(
         { error: "Chain is not initialized properly" },
@@ -59,10 +53,39 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const answer = await agentExecutor.invoke({
-      input: question,
+    // Get current date and time for context
+    const currentDateTime = new Date().toISOString();
+
+    // Create a prompt template that includes the current datetime
+    const template = `Current date and time: {datetime}
+
+Question: {question}`;
+    const promptTemplate = new PromptTemplate({
+      template,
+      inputVariables: ["datetime", "question"],
     });
-    return Response.json({ answer, question, tools: [] });
+
+    // Format the input using the prompt template
+    const formattedInput = await promptTemplate.format({
+      datetime: currentDateTime,
+      question: question,
+    });
+
+    const result = await agentExecutor.invoke({
+      input: formattedInput,
+    });
+
+    // Extract the answer from the result object, as the agent returns a complex object
+    const answer =
+      result.output ||
+      result.answer ||
+      result.response ||
+      JSON.stringify(result);
+    return Response.json({
+      answer,
+      question,
+      tools: ["wikipedia", "calculator"],
+    });
   } catch (error) {
     console.error("Error in POST /api/agents:", error);
 
