@@ -7,7 +7,7 @@ import React, { useState, FormEvent } from "react";
 interface AgentResult {
   question?: string;
   output: string;
-  intermediateSteps?: string[];
+  intermediateSteps?: any;
 }
 
 export default function ArticleResearchAgent() {
