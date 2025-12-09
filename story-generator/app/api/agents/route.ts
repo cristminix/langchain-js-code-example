@@ -27,7 +27,6 @@ export async function POST(req: NextRequest) {
         { status: 500 },
       );
     }
-
     // ! membuat kotak alat untuk agen
     // ! ingat untuk menjalankan 'npm install @langchain/community'
     const wikipediaQuery = new WikipediaQueryRun({ topKResults: 1 });
