@@ -7,6 +7,8 @@ import { Calculator } from "@langchain/community/tools/calculator";
 
 // Create model inside the POST function to handle environment variable issues
 export async function POST(req: NextRequest) {
+  let model;
+
   try {
     const { question } = await req.json();
 
@@ -14,7 +16,6 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: "Question is required" }, { status: 400 });
     }
 
-    let model;
     try {
       model = createChatModel();
     } catch (error) {
@@ -74,12 +75,12 @@ Question: {question}`;
     });
 
     // Extract the answer from the result object, as the agent returns a complex object
-    const answer =
-      result.output ||
-      result.answer ||
-      result.response ||
-      JSON.stringify(result);
-    return Response.json(result);
+    // const answer =
+    //   result.output ||
+    //   result.answer ||
+    //   result.response ||
+    //   JSON.stringify(result);
+    return Response.json({ question, ...result });
   } catch (error) {
     console.error("Error in POST /api/agents:", error);
 
@@ -96,13 +97,33 @@ Question: {question}`;
         { status: 500 },
       );
     }
-
+    if (error instanceof Error) {
+      if (error.message.trim()) {
+        const formatedMessage = await model.invoke(
+          `Berikan ringkasan dari pesan berikut:\n ${error.message}`,
+        );
+        return Response.json(
+          {
+            error: "An error occurred processing your request",
+            message: formatedMessage.content,
+          },
+          { status: 200 },
+        );
+      }
+      return Response.json(
+        {
+          error: "An error occurred processing your request",
+          message: error.message,
+        },
+        { status: 200 },
+      );
+    }
     return Response.json(
       {
         error: "An error occurred processing your request",
         message: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 },
+      { status: 200 },
     );
   }
 }

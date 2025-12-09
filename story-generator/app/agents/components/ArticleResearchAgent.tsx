@@ -34,8 +34,12 @@ export default function ArticleResearchAgent() {
         });
 
         const data = await response.json();
-
-        setData(data);
+        const { error, message } = data;
+        if (error) {
+          setData({ output: message });
+        } else {
+          setData(data);
+        }
       } catch (error) {
         console.error(error);
         const { message } = error as Error;
@@ -85,10 +89,12 @@ export default function ArticleResearchAgent() {
           <div className="flex gap-2">
             <span className="text-2xl">🤖</span>
             <span className="font-bold text-green-400">answer:</span>
-            <div
-              className="-mt-6 prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: marked(data.output) }}
-            />
+            {data.output && (
+              <div
+                className="-mt-6 prose prose-sm max-w-none"
+                dangerouslySetInnerHTML={{ __html: marked(data.output) }}
+              />
+            )}
           </div>
 
           {/* Tools Used Display */}
