@@ -31,7 +31,6 @@ export async function POST(req: NextRequest) {
     // ! membuat kotak alat untuk agen
     // ! ingat untuk menjalankan 'npm install @langchain/community'
     const wikipediaQuery = new WikipediaQueryRun({ topKResults: 1 });
-
     const calculator = new Calculator();
 
     const tools = [wikipediaQuery, calculator];
