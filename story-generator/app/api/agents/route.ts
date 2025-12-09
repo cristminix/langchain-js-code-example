@@ -32,9 +32,7 @@ export async function POST(req: NextRequest) {
     // ! ingat untuk menjalankan 'npm install @langchain/community'
     const wikipediaQuery = new WikipediaQueryRun({ topKResults: 1 });
     const calculator = new Calculator();
-
     const tools = [wikipediaQuery, calculator];
-
     // ! mendefinisikan Agen dan AgentExecutor dengan pendekatan classic
     const agentExecutor = await initializeAgentExecutorWithOptions(
       tools,
