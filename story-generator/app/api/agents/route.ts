@@ -39,6 +39,8 @@ export async function POST(req: NextRequest) {
       {
         agentType: "zero-shot-react-description",
         verbose: true,
+        returnIntermediateSteps: true,
+        // maxIterations: 4,
       },
     );
 
@@ -77,11 +79,7 @@ Question: {question}`;
       result.answer ||
       result.response ||
       JSON.stringify(result);
-    return Response.json({
-      answer,
-      question,
-      tools: ["wikipedia", "calculator"],
-    });
+    return Response.json(result);
   } catch (error) {
     console.error("Error in POST /api/agents:", error);
 

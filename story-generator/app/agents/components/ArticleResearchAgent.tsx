@@ -6,8 +6,8 @@ import React, { useState, FormEvent } from "react";
 // Tipe data untuk hasil response
 interface AgentResult {
   question?: string;
-  answer: string;
-  tools?: string[];
+  output: string;
+  intermediateSteps?: string[];
 }
 
 export default function ArticleResearchAgent() {
@@ -38,6 +38,8 @@ export default function ArticleResearchAgent() {
         setData(data);
       } catch (error) {
         console.error(error);
+        const { message } = error as Error;
+        setData({ output: message });
       }
     }
 
@@ -85,18 +87,22 @@ export default function ArticleResearchAgent() {
             <span className="font-bold text-green-400">answer:</span>
             <div
               className="-mt-6 prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: marked(data.answer) }}
+              dangerouslySetInnerHTML={{ __html: marked(data.output) }}
             />
           </div>
 
           {/* Tools Used Display */}
-          {data.tools && data.tools?.length > 0 && (
+          {data.intermediateSteps && data.intermediateSteps?.length > 0 && (
             <div className="flex gap-2 items-start">
               <span className="text-2xl">🧰</span>
               <div>
-                <span className="font-bold text-yellow-400">tools used: </span>
+                <span className="font-bold text-yellow-400">
+                  {data.intermediateSteps.length} tools used:{" "}
+                </span>
                 <span className="font-mono text-lg">
-                  {data.tools?.join(" ")}
+                  {data.intermediateSteps
+                    .map((step) => step.action.tool)
+                    .join(", ")}
                 </span>
               </div>
             </div>
