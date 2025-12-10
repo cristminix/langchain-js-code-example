@@ -1,0 +1,30 @@
+Sejarah Internet dimulai pada tahun 1960-an ketika pemerintah Amerika Serikat mengembangkan ARPANET,
+    jaringan komputer yang menjadi cikal bakal internet. ARPANET dikembangkan oleh ARPA (Advanced Research
+    Projects Agency) sebagai bagian dari Departemen Pertahanan Amerika Serikat. Tujuan utamanya adalah
+    menciptakan jaringan komunikasi yang tahan terhadap serangan nuklir.
+
+    Pada tahun 1971, Ray Tomlinson mengirim email pertama dan menemukan penggunaan simbol "@" untuk
+    memisahkan nama pengguna dan nama host. Ini menjadi standar dalam komunikasi email hingga saat ini.
+
+    Protokol TCP/IP dikembangkan pada tahun 1970-an dan menjadi standar komunikasi internet pada tahun 1983.
+    TCP/IP memungkinkan berbagai jenis jaringan untuk terhubung dan berkomunikasi satu sama lain.
+
+    Pada tahun 1989, Tim Berners-Lee dari CERN mengembangkan World Wide Web (WWW), yang memungkinkan
+    pengguna untuk mengakses informasi melalui hyperlink. Ia juga menciptakan HTML, HTTP, dan browser
+    web pertama yang disebut WorldWideWeb.
+
+    Pada tahun 1990-an, internet mulai berkembang pesat dengan munculnya browser web seperti Mosaic dan
+    Netscape Navigator. Perusahaan seperti AOL dan CompuServe menyediakan akses internet kepada
+    konsumen rumahan.
+
+    Pada awal 2000-an, dot-com bubble meledak dan banyak perusahaan internet bangkrut. Namun,
+    perusahaan seperti Google dan Amazon bertahan dan menjadi pemain utama dalam industri internet.
+
+    Media sosial mulai populer pada pertengahan 2000-an dengan platform seperti Friendster, MySpace,
+    dan kemudian Facebook yang didirikan pada tahun 2004. Twitter diluncurkan pada tahun 2006,
+    dan Instagram pada tahun 2010.
+
+    Saat ini, internet telah menjadi bagian tak terpisahkan dari kehidupan sehari-hari. Dengan
+    kemajuan teknologi mobile, internet dapat diakses dari mana saja dan kapan saja. Internet of Things
+    (IoT) menghubungkan berbagai perangkat sehari-hari ke internet, menciptakan ekosistem yang
+    terhubung secara global.
